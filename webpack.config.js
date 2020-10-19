@@ -1,11 +1,11 @@
 const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 
-const dev = process.env.NODE_ENV !== 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 const config = {
-  mode: dev ? 'development' : 'production',
+  mode: isProd ? 'production' : 'development',
   entry: {
     index: './src/index.tsx',
   },
@@ -33,20 +33,21 @@ const config = {
   ],
 };
 
-if (dev) {
-  config.devServer = {
-    port: 8080, // https://webpack.js.org/configuration/dev-server/#devserverport
-    open: true, // https://webpack.js.org/configuration/dev-server/#devserveropen
-    hot: true, // https://webpack.js.org/configuration/dev-server/#devserverhot
-    compress: true, // https://webpack.js.org/configuration/dev-server/#devservercompress
-    stats: 'errors-only', // https://webpack.js.org/configuration/dev-server/#devserverstats-
-    overlay: true, // https://webpack.js.org/configuration/dev-server/#devserveroverlay
-  };
-} else {
+if (isProd) {
   config.optimization = {
     minimizer: [
-      new TerserPlugin(),
+      new TerserWebpackPlugin(),
     ],
+  };
+} else {
+  // for more information, see https://webpack.js.org/configuration/dev-server
+  config.devServer = {
+    port: 8080,
+    open: true,
+    hot: true,
+    compress: true,
+    stats: 'errors-only',
+    overlay: true,
   };
 }
 
